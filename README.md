@@ -115,4 +115,4 @@ MIT
 
 ## Author
 
-psychomad
+Argo from CenturiaLabs
