@@ -14,6 +14,7 @@
 - **ntpsec:** Secure and up-to-date NTP server.
 - **Portsentry:** Protection against port scanning attacks.
 - **Automated service deployment:** All services are enabled and started automatically on boot.
+- **Fail2ban** installed with default ssh block only
 
 ---
 
