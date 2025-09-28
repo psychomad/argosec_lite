@@ -29,7 +29,18 @@ def ensure_ufw_installed():
             print("Failed to install ufw. Exiting.")
             sys.exit(1)
     return ufw_path
-
+    
+def ensure_fail2ban_installed():
+    fb_path = shutil.which("fail2ban-client")
+    if not fb_path:
+        print("Fail2ban not found, installing fail2ban...")
+        run(["apt-get", "install", "-y", "fail2ban"])
+        fb_path = shutil.which("fail2ban-client")
+        if not fb_path:
+            print("Failed to install fail2ban. Exiting.")
+            sys.exit(1)
+    return fb_path
+    
 def ensure_portsentry_installed():
     ps_path = shutil.which("portsentry")
     if not ps_path:
