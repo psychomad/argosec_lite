@@ -10,7 +10,6 @@ import base64
 
 def run(cmd, shell=False):
     print(f"Running: {cmd}")
-    # Ensure /usr/sbin is in PATH for ufw and portsentry
     if "/usr/sbin" not in os.environ["PATH"]:
         os.environ["PATH"] += os.pathsep + "/usr/sbin"
     result = subprocess.run(cmd, shell=shell, capture_output=True, text=True)
@@ -42,12 +41,6 @@ def ensure_portsentry_installed():
             sys.exit(1)
     return ps_path
 
-def install_pihole():
-    print("Installing Pi-hole DNS server (this may take a while)...")
-    run("curl -sSL https://install.pi-hole.net | bash", shell=True)
-    print("Pi-hole installation complete.")
-    # By default, Pi-hole listens on port 53 (UDP/TCP)
-
 def get_public_interface():
     result = run(["ip", "route"], shell=False)
     for line in result.stdout.splitlines():
@@ -72,7 +65,7 @@ def get_server_ip(interface):
 
 def install_packages():
     pkgs = [
-        "suricata", "ntpsec", "iptables-persistent", "shadowsocks-libev", "ufw", "portsentry"
+        "suricata", "ntpsec", "iptables-persistent", "shadowsocks-libev", "ufw", "portsentry", "curl"
     ]
     run(["apt-get", "update"])
     run(["apt-get", "install", "-y"] + pkgs)
@@ -154,7 +147,6 @@ def deploy_iptables(interface):
     ]
     for rule in rules:
         run(rule.split())
-    # Save iptables rules persistently (Debian/Ubuntu)
     if shutil.which("netfilter-persistent"):
         run(["/usr/sbin/netfilter-persistent", "save"])
     elif shutil.which("service"):
@@ -168,14 +160,12 @@ def setup_ntpsec():
 
 def setup_ufw(interface):
     ufw_path = ensure_ufw_installed()
-    # Reset and set up SSH, Shadowsocks, DNS allowed
     run([ufw_path, "reset"])
     run([ufw_path, "default", "deny", "incoming"])
     run([ufw_path, "default", "allow", "outgoing"])
     run([ufw_path, "logging", "on"])
     run([ufw_path, "allow", "ssh"])
     run([ufw_path, "allow", "8388"])  # Shadowsocks port
-    run([ufw_path, "allow", "53"])    # DNS port for Pi-hole
     run([ufw_path, "enable"])
 
 def deploy_shadowsocks_outline(server_ip):
@@ -194,7 +184,6 @@ def deploy_shadowsocks_outline(server_ip):
         json.dump(ss_conf, f)
     run(["systemctl", "enable", "shadowsocks-libev"])
     run(["systemctl", "restart", "shadowsocks-libev"])
-    # Compose Outline access key
     ss_base = f"{method}:{password}"
     ss_base64 = base64.urlsafe_b64encode(ss_base.encode()).decode().rstrip("=")
     outline_url = f"ss://{ss_base64}@{server_ip}:{port}/?outline=1"
@@ -214,8 +203,6 @@ def main():
         sys.exit(1)
     print("Installing packages...")
     install_packages()
-    print("Installing Pi-hole DNS server...")
-    install_pihole()
     print("Detecting public interface...")
     interface = get_public_interface()
     if not interface:
@@ -232,7 +219,7 @@ def main():
     deploy_iptables(interface)
     print("Setting up ntpsec...")
     setup_ntpsec()
-    print("Setting up ufw firewall (SSH, Shadowsocks, DNS allowed) and logging...")
+    print("Setting up ufw firewall (SSH, Shadowsocks allowed) and logging...")
     setup_ufw(interface)
     print("Deploying Shadowsocks server for Outline client...")
     deploy_shadowsocks_outline(server_ip)
