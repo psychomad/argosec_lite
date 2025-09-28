@@ -13,7 +13,6 @@
 - **Shadowsocks-libev proxy:** Outline-compatible, safe access key generated and printed for use in Outline client (mobile/desktop).
 - **ntpsec:** Secure and up-to-date NTP server.
 - **Portsentry:** Protection against port scanning attacks.
-- **Pi-hole DNS server:** Blocks ads and trackers network-wide; ready for local DNS.
 - **Automated service deployment:** All services are enabled and started automatically on boot.
 
 ---
@@ -21,8 +20,6 @@
 ## IMPORTANT
 
 - All tools come with **basic features** enabled and default rules.
-- **You must add your own blacklist for Pi-hole** to block additional domains (ads, malware, trackers etc).  
-  - Add blocklists via Pi-hole's web interface or `gravity` script.
 - **You must enable Suricata sources** for updated community, emerging, and threat rules:
   - Edit `/etc/suricata/suricata.yaml` and add/update source URLs.
   - Run `suricata-update` for the latest rules.
@@ -67,18 +64,13 @@
    - Set up UFW firewall (SSH, Shadowsocks, Pi-hole DNS allowed in).
    - Deploy Shadowsocks proxy and print your Outline access key for mobile/desktop.
    - Install and enable portsentry.
-   - Install Pi-hole for local DNS filtering.
 
 4. **Connect to Shadowsocks using Outline client:**
 
     - Copy the access key printed by the script (starts with `ss://`).
     - Open the Outline app, click "+" and paste the access key.
 
-5. **Manage your Pi-hole DNS server:**
-    - Access Pi-hole's web UI at [http://your-server-ip/admin](http://your-server-ip/admin)
-    - Add blocklists, enable advanced filtering, and monitor DNS queries.
-
-6. **Update Suricata rules:**
+5. **Update Suricata rules:**
     - Add new sources in `/etc/suricata/suricata.yaml`
     - Run `suricata-update` to fetch the latest community and threat rules.
 
@@ -107,7 +99,6 @@ sudo apt-get remove --purge suricata ntpsec iptables-persistent shadowsocks-libe
 - Sysctl changes are made in `/etc/sysctl.conf` (review before/after running).
 - UFW rules are reset and only SSH, Shadowsocks, DNS are allowed in.
 - Shadowsocks config is written to `/etc/shadowsocks-libev/config.json`.
-- Pi-hole admin panel is available at `http://<server_ip>/admin`.
 - All commands are logged to stdout.
 
 ## License
