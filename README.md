@@ -1,6 +1,6 @@
 # argosec_lite
 
-**argosec_lite** is an automated security deployment and hardening tool for Linux servers. It installs and configures Suricata as an IPS, sets up system and kernel-level protections for common exploits and DDoS attacks, deploys iptables rules, enables UFW firewall (allowing only SSH, Shadowsocks, and DNS), installs and configures Shadowsocks as an Outline-compatible proxy server, sets up portsentry as an anti-portscan tool, and deploys Pi-hole as a DNS server. I suggest also add manual installation of pihole for a dns firewall.
+**argosec_lite** is an automated security deployment and hardening tool for Linux servers. It installs and configures Suricata as an IPS, sets up system and kernel-level protections for common exploits and DDoS attacks, deploys iptables rules, enables UFW firewall (allowing only SSH, Shadowsocks, and DNS), installs and configures Shadowsocks as an Outline-compatible proxy server, sets up portsentry as an anti-portscan tool. I suggest also add manual installation of pihole for a dns firewall.
 
 ---
 
